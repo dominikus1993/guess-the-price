@@ -1,1 +1,3 @@
 Microsoft.Orleans.Core.Abstractions
+Microsoft.Orleans.Runtime.Abstractions
+Microsoft.Extensions.Logging.Abstractions
