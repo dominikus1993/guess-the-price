@@ -1,3 +1,5 @@
+using GuessThePrice.Core.Services;
+
 namespace GuessThePrice.Core.Model;
 
 public class Product
@@ -18,4 +20,9 @@ public class Game
     public Guid GameId { get; set; }
     public IReadOnlyCollection<Product> Products { get; set; }
     public IReadOnlyCollection<Response> Responses { get; set; }
+
+    public static Game NewGame(IReadOnlyCollection<RossmannProduct> products)
+    {
+        return new Game();
+    }
 }

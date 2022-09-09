@@ -5,7 +5,7 @@ framework: net6.0
 
 nuget Microsoft.AspNetCore.Components.WebAssembly
 nuget Microsoft.AspNetCore.Components.WebAssembly.DevServer
-
+nuget System.Linq.Async
   
 nuget Microsoft.Extensions.Hosting
 nuget Microsoft.Orleans.Clustering.AzureStorage
