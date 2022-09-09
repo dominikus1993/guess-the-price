@@ -26,19 +26,22 @@ public class GameGrain  : Grain, IGameGrain
     public async Task<Game> StartGame()
     {
         var products = await _productsDataProvider.GetRandomPromotionalProducts(5).ToListAsync();
-
+        
         var game = Game.NewGame(products);
-
+        _state.State = game;
         await _state.WriteStateAsync();
+        return game;
     }
 
-    public Task AddResponse(Response response)
+    public async Task AddResponse(Response response)
     {
-        throw new NotImplementedException();
+        
+        _state.State.AddResponse(response);
+        await _state.WriteStateAsync();
     }
 
     public Task<Game> GetGame()
     {
-        throw new NotImplementedException();
+        return Task.FromResult<Game>(_state.State);
     }
 }
