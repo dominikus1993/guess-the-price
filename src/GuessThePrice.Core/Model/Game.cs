@@ -25,7 +25,7 @@ public class Response
 {
     
 }
-public class Game
+public sealed class Game
 {
     public IReadOnlyCollection<Product> Products { get; set; }
     public IReadOnlyCollection<Response> Responses { get; set; }

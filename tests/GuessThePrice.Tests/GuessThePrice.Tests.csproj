@@ -3,5 +3,9 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\GuessThePrice.Core\GuessThePrice.Core.csproj" />
+    <ProjectReference Include="..\..\src\GuessThePrice.WebApp\GuessThePrice.WebApp.csproj" />
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
