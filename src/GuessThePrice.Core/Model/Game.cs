@@ -1,3 +1,4 @@
+using GuessThePrice.Core.Model.Exceptions;
 using GuessThePrice.Core.Services;
 
 namespace GuessThePrice.Core.Model;
@@ -21,24 +22,36 @@ public class Product
     }
 }
 
-public class Response
-{
-    
-}
+public readonly record struct PromotionalPriceResponse(decimal Value);
+
+public record Response(Product Product, PromotionalPriceResponse PromotionalPriceResponse);
+
 public sealed class Game
 {
-    public IReadOnlyCollection<Product> Products { get; set; }
-    public IReadOnlyCollection<Response> Responses { get; set; }
+    private const int MaximumAnswersQuantity = 5;
+    private List<Response> _responses;
+    public IReadOnlyCollection<Product> Products { get; }
+    public IReadOnlyCollection<Response> Responses => _responses;
 
+    private Game(IReadOnlyCollection<Product> products)
+    {
+        _responses = new List<Response>();
+        Products = products;
+    }
     public void AddResponse(Response response)
     {
+        ArgumentNullException.ThrowIfNull(response);
         
-    }
-    public static Game NewGame(IReadOnlyCollection<RossmannProduct> products)
-    {
-        return new Game()
+        if (_responses.Count >= MaximumAnswersQuantity)
         {
-            Products = products.Select(x => new Product(x)).ToList(), Responses = new List<Response>()
-        };
+            throw new ToManyAnswersException($"Number of responses should be {MaximumAnswersQuantity}");
+        }
+        
+        _responses.Add(response);    
+    }
+    
+    public static Game NewGame(IEnumerable<RossmannProduct> products)
+    {
+        return new Game(products.Select(x => new Product(x)).ToList());
     }
 }

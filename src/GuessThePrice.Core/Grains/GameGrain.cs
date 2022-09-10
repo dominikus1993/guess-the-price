@@ -35,7 +35,6 @@ public class GameGrain  : Grain, IGameGrain
 
     public async Task AddResponse(Response response)
     {
-        
         _state.State.AddResponse(response);
         await _state.WriteStateAsync();
     }
