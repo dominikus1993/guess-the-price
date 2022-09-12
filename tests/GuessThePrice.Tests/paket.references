@@ -2,6 +2,7 @@ AutoFixture
 FluentAssertions
 xunit
 xunit.runner.visualstudio
+Microsoft.Orleans.TestingHost
 Moq
 coverlet.collector
 Testcontainers

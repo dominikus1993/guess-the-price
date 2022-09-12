@@ -23,6 +23,7 @@ nuget Orleans.Persistence.Redis
 nuget Swashbuckle.AspNetCore
 nuget OrleansDashboard
 
+nuget Microsoft.Orleans.TestingHost
 nuget AutoFixture
 nuget FluentAssertions
 nuget xunit

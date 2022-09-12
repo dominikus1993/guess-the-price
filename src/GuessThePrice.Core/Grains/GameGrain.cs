@@ -41,12 +41,34 @@ public class GameGrain : Grain, IGameGrain
 
     public async Task AddResponse(Response response)
     {
-        _state.State.AddResponse(response);
-        await _state.WriteStateAsync();
+        if (CanAddResponse(response))
+        {
+            _state.State.AddResponse(response);
+            await _state.WriteStateAsync();
+        }
     }
 
     public Task<Game> GetGame()
     {
         return Task.FromResult<Game>(_state.State);
+    }
+
+    private bool CanAddResponse(Response response)
+    {
+        var isEmpty = _state.State.IsEmpty;
+        if (isEmpty)
+        {
+            return false;
+        }
+
+        var responseExists = _state.State.Responses.Any(x => x.ProductId == response.ProductId);
+        if (responseExists)
+        {
+            return false;
+        }
+
+        var productExists = _state.State.Products.Any(x => x.Id == response.ProductId);
+
+        return productExists;
     }
 }

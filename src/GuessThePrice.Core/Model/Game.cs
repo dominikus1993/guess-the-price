@@ -30,7 +30,7 @@ public class Product
 
 public readonly record struct PromotionalPriceResponse(decimal Value);
 
-public record Response(Product Product, PromotionalPriceResponse PromotionalPriceResponse);
+public record Response(int ProductId, PromotionalPriceResponse PromotionalPriceResponse);
 
 public sealed class Game
 {
