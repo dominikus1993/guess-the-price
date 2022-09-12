@@ -16,8 +16,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapGet("/test", () => "xD");
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+

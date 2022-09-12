@@ -16,7 +16,7 @@ nuget Microsoft.VisualStudio.Azure.Containers.Tools.Targets
 nuget Microsoft.VisualStudio.Azure.Kubernetes.Tools.Targets
 nuget Orleans.Clustering.Redis
 nuget Orleans.Persistence.Redis
-nuget Microsoft.AspNetCore.SpaProxy
+nuget Swashbuckle.AspNetCore
 nuget OrleansDashboard
 
 nuget AutoFixture
