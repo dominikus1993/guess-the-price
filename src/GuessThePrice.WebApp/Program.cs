@@ -1,11 +1,39 @@
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using GuessThePrice.WebApp;
+using GuessThePrice.Core.Grains;
+using GuessThePrice.WebApp.Data;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
+using Orleans;
+using Orleans.Hosting;
 
-builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+var builder = WebApplication.CreateBuilder(args);
 
-await builder.Build().RunAsync();
+
+builder.Host.UseOrleans(b =>
+{
+    b.AddMemoryGrainStorage("games");
+    b.UseDashboard(options =>
+    {
+        options.Port = 8888;
+    }).ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(GameGrain).Assembly));
+});
+// Add services to the container.
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddSingleton<WeatherForecastService>();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+}
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+app.Run();
