@@ -11,3 +11,4 @@ Microsoft.VisualStudio.Azure.Kubernetes.Tools.Targets
 Orleans.Clustering.Redis
 Orleans.Persistence.Redis
 OrleansDashboard
+Microsoft.AspNetCore.SpaProxy
