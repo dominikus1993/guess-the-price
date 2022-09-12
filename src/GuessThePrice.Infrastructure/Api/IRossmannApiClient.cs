@@ -119,7 +119,7 @@ internal class RossmannApiClient
         _logger = logger;
     }
 
-    public async IAsyncEnumerable<Core.Model.Product> GetMegaProducts(CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Product> GetMegaProducts(CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, "products/v3/api/Products?ShopNumber=735&PageSize=15&Page=1&Statuses=mega");
         using var response =
@@ -135,7 +135,7 @@ internal class RossmannApiClient
 
         foreach (var product in result.Data.Products)
         {
-            yield return new Core.Model.Product() { Id = product.Id, Name = product.Name, Price = product.OldPrice, PromotionalPrice = product.Price, ImageUrl = product.Pictures[0].Medium, Caption = product.Caption, NavigateUrl = product.NavigateUrl };
+            yield return product;
         }
     }
 }

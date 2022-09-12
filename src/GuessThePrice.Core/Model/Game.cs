@@ -7,7 +7,6 @@ public class Product
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    public string Caption { get; set; }
     public string ImageUrl { get; set; }
     public double Price { get; set; }
     public double PromotionalPrice { get; set; }
@@ -21,7 +20,11 @@ public class Product
     public Product(RossmannProduct product)
     {
         Name = product.Name;
-        
+        Id = product.Id;
+        ImageUrl = product.ImageUrl;
+        Price = product.Price;
+        PromotionalPrice = product.PromotionalPrice;
+        NavigateUrl = product.NavigateUrl;
     }
 }
 
