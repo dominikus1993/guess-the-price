@@ -26,7 +26,7 @@ public class GameGrain : Grain, IGameGrain
 
     public async Task<Game> StartGame()
     {
-        if (_state.State.IsInitialized)
+        if (!_state.State.IsInitialized)
         {
             var products = await _productsDataProvider.GetRandomPromotionalProducts(5).ToListAsync();
 

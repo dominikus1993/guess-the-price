@@ -26,4 +26,27 @@ public class GameGrainTests : IClassFixture<OrleansGrainFixture>
 
         game.IsInitialized.Should().BeTrue();
     }
+    
+    
+    [Fact]
+    public async Task TestGetGameWhenIsNotInitialized()
+    {
+        var id = Guid.NewGuid();
+        var grain = _fixture.Cluster.GrainFactory.GetGrain<IGameGrain>(id);
+
+        var game = await grain.GetGame();
+
+        game.IsInitialized.Should().BeFalse();
+    }
+    
+    [Fact]
+    public async Task TestGetGameWhenIsInitialized()
+    {
+        var id = Guid.NewGuid();
+        var grain = _fixture.Cluster.GrainFactory.GetGrain<IGameGrain>(id);
+        await grain.StartGame();
+        var game = await grain.GetGame();
+
+        game.IsInitialized.Should().BeTrue();
+    }
 }
