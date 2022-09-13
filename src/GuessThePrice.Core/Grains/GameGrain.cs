@@ -26,7 +26,7 @@ public class GameGrain : Grain, IGameGrain
 
     public async Task<Game> StartGame()
     {
-        if (_state.State.IsEmpty)
+        if (_state.State.IsInitialized)
         {
             var products = await _productsDataProvider.GetRandomPromotionalProducts(5).ToListAsync();
 
@@ -55,8 +55,8 @@ public class GameGrain : Grain, IGameGrain
 
     private bool CanAddResponse(Response response)
     {
-        var isEmpty = _state.State.IsEmpty;
-        if (isEmpty)
+        var isInitialized = _state.State.IsInitialized;
+        if (!isInitialized)
         {
             return false;
         }

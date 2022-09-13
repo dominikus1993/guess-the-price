@@ -39,7 +39,7 @@ public sealed class Game
     public IReadOnlyCollection<Product> Products { get; }
     public IReadOnlyCollection<Response> Responses => _responses;
 
-    public bool IsEmpty => Products.Count == 0;
+    public bool IsInitialized => Products.Count > 0;
     public Game()
     {
         Products = Array.Empty<Product>();
