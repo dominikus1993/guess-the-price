@@ -47,6 +47,6 @@ public class FakeProductsDataProvider : IProductsDataProvider
 {
     public IAsyncEnumerable<RossmannProduct> GetRandomPromotionalProducts(int take, CancellationToken cancellationToken = default)
     {
-        return new[] { new RossmannProduct("product", 1, 4.3, 4.1, "", "") }.ToAsyncEnumerable();
+        return new[] { new RossmannProduct(1, "product", 4.3, 4.1, "", "") }.ToAsyncEnumerable();
     }
 }

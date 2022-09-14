@@ -9,4 +9,6 @@ public interface IGameGrain : IGrainWithGuidKey
     Task<Game> StartGame();
     Task AddResponse(Response response);
     Task<Game> GetGame();
+    
+    Task<Score> GetGameScore();
 }

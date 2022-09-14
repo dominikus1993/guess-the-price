@@ -40,7 +40,7 @@ public class GameController : ControllerBase
     {
         var gameGrain = _cluster.GetGrain<IGameGrain>(id);
 
-        await gameGrain.AddResponse(new Response(request.ProductId,
+        await gameGrain.AddResponse(new Response(new ProductId(request.ProductId),
             new PromotionalPriceResponse(request.PromotionalPriceResponse.Value)));
         return Ok();
     }

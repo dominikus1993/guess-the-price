@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,7 @@ public class Attribute
 
 public class Data
 {
-    [JsonPropertyName("products")] public List<Product> Products { get; set; }
+    [JsonPropertyName("products")] public List<Product>? Products { get; set; }
 
     [JsonPropertyName("totalPages")] public int TotalPages { get; set; }
 
@@ -63,7 +64,7 @@ public class Product
 
     [JsonPropertyName("rossnetId")] public int RossnetId { get; set; }
 
-    [JsonPropertyName("eanNumber")] public List<string> EanNumber { get; set; }
+    [JsonPropertyName("eanNumber")] public List<string>? EanNumber { get; set; }
 
     [JsonPropertyName("navigateUrl")] public string NavigateUrl { get; set; }
 
@@ -79,9 +80,9 @@ public class Product
 
     [JsonPropertyName("dimensional")] public int Dimensional { get; set; }
 
-    [JsonPropertyName("pictures")] public List<Picture> Pictures { get; set; }
+    [JsonPropertyName("pictures")] public List<Picture>? Pictures { get; set; }
 
-    [JsonPropertyName("promotion")] public Promotion Promotion { get; set; }
+    [JsonPropertyName("promotion")] public Promotion? Promotion { get; set; }
 
     [JsonPropertyName("promotionFrom")] public DateTime PromotionFrom { get; set; }
 
@@ -93,7 +94,7 @@ public class Product
 
     [JsonPropertyName("category")] public string Category { get; set; }
 
-    [JsonPropertyName("attributes")] public List<Attribute> Attributes { get; set; }
+    [JsonPropertyName("attributes")] public List<Attribute>? Attributes { get; set; }
 }
 
 public class Promotion
@@ -105,7 +106,7 @@ public class Promotion
 
 public class ApiResult
 {
-    [JsonPropertyName("data")] public Data Data { get; set; }
+    [JsonPropertyName("data")] public Data? Data { get; set; }
 }
 
 internal class RossmannApiClient
@@ -119,7 +120,7 @@ internal class RossmannApiClient
         _logger = logger;
     }
 
-    public async IAsyncEnumerable<Product> GetMegaProducts(CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Product> GetMegaProducts([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, "products/v3/api/Products?ShopNumber=735&PageSize=15&Page=1&Statuses=mega");
         using var response =

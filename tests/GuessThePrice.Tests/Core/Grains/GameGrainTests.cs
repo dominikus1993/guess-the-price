@@ -57,7 +57,7 @@ public class GameGrainTests : IClassFixture<OrleansGrainFixture>
     {
         var id = Guid.NewGuid();
         var grain = _fixture.Cluster.GrainFactory.GetGrain<IGameGrain>(id);
-        await grain.AddResponse(new Response(1, new PromotionalPriceResponse(2)));
+        await grain.AddResponse(new Response(new ProductId(1), new PromotionalPriceResponse(2)));
         var subject = await grain.GetGame();
         subject.IsInitialized.Should().BeFalse();
         subject.Responses.Should().BeEmpty();
@@ -99,7 +99,7 @@ public class GameGrainTests : IClassFixture<OrleansGrainFixture>
         var id = Guid.NewGuid();
         var grain = _fixture.Cluster.GrainFactory.GetGrain<IGameGrain>(id);
         var game = await grain.StartGame();
-        await grain.AddResponse(new Response(50000, new PromotionalPriceResponse(2)));
+        await grain.AddResponse(new Response(new ProductId(2137), new PromotionalPriceResponse(2)));
         var subject = await grain.GetGame();
         subject.IsInitialized.Should().BeTrue();
         subject.Responses.Should().BeEmpty();

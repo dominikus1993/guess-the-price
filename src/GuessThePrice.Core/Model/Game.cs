@@ -1,11 +1,16 @@
 using GuessThePrice.Core.Model.Exceptions;
 using GuessThePrice.Core.Services;
 
+using LanguageExt;
+using static LanguageExt.Prelude;
+
+using Array = System.Array;
+
 namespace GuessThePrice.Core.Model;
 
 public class Product
 {
-    public int Id { get; set; }
+    public ProductId Id { get; set; }
     public string Name { get; set; }
     public string ImageUrl { get; set; }
     public double Price { get; set; }
@@ -20,7 +25,7 @@ public class Product
     public Product(RossmannProduct product)
     {
         Name = product.Name;
-        Id = product.Id;
+        Id = new ProductId(product.Id);
         ImageUrl = product.ImageUrl;
         Price = product.Price;
         PromotionalPrice = product.PromotionalPrice;
@@ -30,7 +35,11 @@ public class Product
 
 public readonly record struct PromotionalPriceResponse(decimal Value);
 
-public record Response(int ProductId, PromotionalPriceResponse PromotionalPriceResponse);
+public readonly record struct Score(double Value);
+
+public record Response(ProductId ProductId, PromotionalPriceResponse PromotionalPriceResponse);
+
+public readonly record struct ProductId(int Value);
 
 public sealed class Game
 {
@@ -40,6 +49,8 @@ public sealed class Game
     public IReadOnlyCollection<Response> Responses => _responses;
 
     public bool IsInitialized => Products.Count > 0;
+    public bool IsFinished => Responses.Count == Products.Count;
+    
     public Game()
     {
         Products = Array.Empty<Product>();
@@ -51,20 +62,42 @@ public sealed class Game
         _responses = new List<Response>();
         Products = products;
     }
-    public void AddResponse(Response response)
+    public Either<Exception, Unit> AddResponse(Response response)
     {
         ArgumentNullException.ThrowIfNull(response);
-        
-        if (_responses.Count >= MaximumAnswersQuantity)
-        {
-            throw new ToManyAnswersException($"Number of responses should be {MaximumAnswersQuantity}");
-        }
-        
-        _responses.Add(response);    
+        return TryAddResponse(response);
     }
     
     public static Game NewGame(IEnumerable<RossmannProduct> products)
     {
         return new Game(products.Select(x => new Product(x)).ToList());
+    }
+    
+    private Either<Exception, Unit> TryAddResponse(Response response)
+    {
+        if (!IsInitialized)
+        {
+            return Left<Exception>(new GameIsNotStartedException("Game is not started"));
+        }
+        
+        if (IsFinished)
+        {
+            return Left<Exception>(new GameFinishedException("game is finished"));
+        }
+
+        var responseExists = this.Responses.Any(x => x.ProductId == response.ProductId);
+        if (responseExists)
+        {
+            return Left<Exception>(new ResponseExistsException($"response of id: {response.ProductId} exists"));
+        }
+
+        var productExists = this.Products.Any(x => x.Id == response.ProductId);
+
+        if (productExists)
+        {
+            _responses.Add(response);
+            return Right<Unit>(Unit.Default);
+        }
+        return Left<Exception>(new ProductsNotExistsException($"Product of id: {response.ProductId} not exists"));
     }
 }

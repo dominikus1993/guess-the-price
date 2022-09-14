@@ -41,11 +41,8 @@ public class GameGrain : Grain, IGameGrain
 
     public async Task AddResponse(Response response)
     {
-        if (CanAddResponse(response))
-        {
-            _state.State.AddResponse(response);
-            await _state.WriteStateAsync();
-        }
+        _state.State.AddResponse(response);
+        await _state.WriteStateAsync();
     }
 
     public Task<Game> GetGame()
@@ -53,22 +50,8 @@ public class GameGrain : Grain, IGameGrain
         return Task.FromResult<Game>(_state.State);
     }
 
-    private bool CanAddResponse(Response response)
+    public async Task<Score> GetGameScore()
     {
-        var isInitialized = _state.State.IsInitialized;
-        if (!isInitialized)
-        {
-            return false;
-        }
-
-        var responseExists = _state.State.Responses.Any(x => x.ProductId == response.ProductId);
-        if (responseExists)
-        {
-            return false;
-        }
-
-        var productExists = _state.State.Products.Any(x => x.Id == response.ProductId);
-
-        return productExists;
+        throw new NotImplementedException();
     }
 }

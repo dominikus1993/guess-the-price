@@ -4,48 +4,82 @@ using GuessThePrice.Core.Model;
 using GuessThePrice.Core.Model.Exceptions;
 using GuessThePrice.Core.Services;
 
+using LanguageExt;
+
 namespace GuessThePrice.Tests.Core.Model;
 
 public class GameTests
 {
     [Fact]
-    public void TestAddResponseWhenResponsesListIsEmpty()
+    public void TestAddResponseWhenProductsListsIsEmpty()
     {
         // Arrange
         var game = Game.NewGame(new List<RossmannProduct>());
         // Act
-        game.AddResponse(new Response(1, new PromotionalPriceResponse(21)));
+        var result  = game.AddResponse(new Response(new ProductId(1), new PromotionalPriceResponse(21)));
         // Assert
-        game.Responses.Should().NotBeEmpty();
-        game.Responses.Should().HaveCount(1);
+        result.IsLeft.Should().BeTrue();
+        var exc = result.IfRight(() => throw new Exception("Should be left"));
+        exc.Should().BeOfType<GameIsNotStartedException>();
     }
     
     [Fact]
-    public void TestAddResponseWhenResponsesListIsNotEmpty()
+    public void TestAddResponseWhenProductsListsIsNotEmpty()
     {
         // Arrange
-        var game = Game.NewGame(new List<RossmannProduct>());
-        game.AddResponse(new Response(1, new PromotionalPriceResponse(21)));
+        var game = Game.NewGame(new List<RossmannProduct>() { new(1, "", 1.2, 3.2, "xD", ""), new(2, "", 1.2, 3.2, "xD", "")});
+        game.AddResponse(new Response(new ProductId(1), new PromotionalPriceResponse(21)));
         // Act
-        game.AddResponse(new Response(2, new PromotionalPriceResponse(21)));
+        var subject = game.AddResponse(new Response(new ProductId(2), new PromotionalPriceResponse(21)));
         // Assert
+        subject.IsRight.Should().BeTrue();
         game.Responses.Should().NotBeEmpty();
         game.Responses.Should().HaveCount(2);
     }
     
     [Fact]
-    public void TestAddResponseWhenResponsesListWhenTryAddMoreThanFiveResponses()
+    public void TestAddResponseWhenResponsesListWhenTryAddMoreThanPossibleResponses()
     {
         // Arrange
-        var game = Game.NewGame(new List<RossmannProduct>());
+        var game = Game.NewGame(new List<RossmannProduct>() { new(1, "", 1.2, 3.2, "xD", ""), new(2, "", 1.2, 3.2, "xD", "")});
+        game.AddResponse(new Response(new ProductId(1), new PromotionalPriceResponse(21)));
         // Act
-        game.AddResponse(new Response(1, new PromotionalPriceResponse(21)));
-        game.AddResponse(new Response(2, new PromotionalPriceResponse(21)));
-        game.AddResponse(new Response(3, new PromotionalPriceResponse(21)));
-        game.AddResponse(new Response(4, new PromotionalPriceResponse(21)));
-        game.AddResponse(new Response(5, new PromotionalPriceResponse(21)));
-
-        Assert.Throws<ToManyAnswersException>(() =>
-            game.AddResponse(new Response(6, new PromotionalPriceResponse(21))));
+        game.AddResponse(new Response(new ProductId(2), new PromotionalPriceResponse(21)));
+        var subject = game.AddResponse(new Response(new ProductId(3), new PromotionalPriceResponse(21)));
+        // Assert
+        subject.IsLeft.Should().BeTrue();
+        subject.IfRight(() => throw new Exception("Should be left")).Should().BeOfType<GameFinishedException>();
+        game.Responses.Should().NotBeEmpty();
+        game.Responses.Should().HaveCount(2);
+    }
+    
+    [Fact]
+    public void TestAddResponseWhenResponsesListWhenProductsNotExists()
+    {
+        // Arrange
+        var game = Game.NewGame(new List<RossmannProduct>() { new(1, "", 1.2, 3.2, "xD", ""), new(2, "", 1.2, 3.2, "xD", "")});
+        game.AddResponse(new Response(new ProductId(1), new PromotionalPriceResponse(21)));
+        // Act
+        var subject = game.AddResponse(new Response(new ProductId(3), new PromotionalPriceResponse(21)));
+        // Assert
+        subject.IsLeft.Should().BeTrue();
+        subject.IfRight(() => throw new Exception("Should be left")).Should().BeOfType<ProductsNotExistsException>();
+        game.Responses.Should().NotBeEmpty();
+        game.Responses.Should().HaveCount(1);
+    }
+    
+    [Fact]
+    public void TestAddResponseWhenResponsesListWhenResponseExists()
+    {
+        // Arrange
+        var game = Game.NewGame(new List<RossmannProduct>() { new(1, "", 1.2, 3.2, "xD", ""), new(2, "", 1.2, 3.2, "xD", "")});
+        game.AddResponse(new Response(new ProductId(1), new PromotionalPriceResponse(21)));
+        // Act
+        var subject = game.AddResponse(new Response(new ProductId(1), new PromotionalPriceResponse(21)));
+        // Assert
+        subject.IsLeft.Should().BeTrue();
+        subject.IfRight(() => throw new Exception("Should be left")).Should().BeOfType<ResponseExistsException>();
+        game.Responses.Should().NotBeEmpty();
+        game.Responses.Should().HaveCount(1);
     }
 }
