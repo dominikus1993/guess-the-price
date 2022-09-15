@@ -1,10 +1,13 @@
 using GuessThePrice.Core.Grains;
 using GuessThePrice.Core.Model;
 using GuessThePrice.WebApp.Requests;
+using GuessThePrice.WebApp.Responses;
 
 using Microsoft.AspNetCore.Mvc;
 
 using Orleans;
+
+using ProductId = GuessThePrice.Core.Model.ProductId;
 
 namespace GuessThePrice.WebApp.Controllers;
 
@@ -20,11 +23,11 @@ public class GameController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<Game>> Get(Guid id)
+    public async Task<ActionResult<GameResponse>> Get(Guid id)
     {
         var gameGrain = _cluster.GetGrain<IGameGrain>(id);
         var game = await gameGrain.GetGame();
-        return Ok(game);
+        return Ok(new GameResponse(game));
     }
     
     [HttpGet("{id:guid}/score")]
