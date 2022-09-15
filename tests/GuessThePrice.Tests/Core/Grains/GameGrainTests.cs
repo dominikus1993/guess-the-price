@@ -105,4 +105,19 @@ public class GameGrainTests : IClassFixture<OrleansGrainFixture>
         subject.Responses.Should().BeEmpty();
         subject.Products.Should().NotBeEmpty();
     }
+    
+    [Fact]
+    public async Task TestCalculateScore()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var grain = _fixture.Cluster.GrainFactory.GetGrain<IGameGrain>(id);
+        var game = await grain.StartGame();
+        await grain.AddResponse(new Response(new ProductId(1), new PromotionalPriceResponse(4.1)));
+
+        // Act
+        var subject = await grain.GetGameScore();
+        // Assert
+        subject.Value.Should().Be(1);
+    }
 }
