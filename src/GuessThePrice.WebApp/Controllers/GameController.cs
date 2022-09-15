@@ -26,6 +26,14 @@ public class GameController : ControllerBase
         var game = await gameGrain.GetGame();
         return Ok(game);
     }
+    
+    [HttpGet("{id:guid}/score")]
+    public async Task<ActionResult<double>> GetGameScore(Guid id)
+    {
+        var gameGrain = _cluster.GetGrain<IGameGrain>(id);
+        var score = await gameGrain.GetGameScore();
+        return Ok(score.Value);
+    }
 
     [HttpPost("{id:guid}")]
     public async Task<IActionResult> StartGame(Guid id)
