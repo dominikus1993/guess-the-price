@@ -82,4 +82,31 @@ public class GameTests
         game.Responses.Should().NotBeEmpty();
         game.Responses.Should().HaveCount(1);
     }
+    
+    
+    [Fact]
+    public void TestCalculateScore()
+    {
+        // Arrange
+        var game = Game.NewGame(new List<RossmannProduct>() { new(1, "", 14, 3, "xD", ""), new(2, "", 14, 3, "xD", "")});
+        game.AddResponse(new Response(new ProductId(1), new PromotionalPriceResponse(3)));
+        game.AddResponse(new Response(new ProductId(2), new PromotionalPriceResponse(3)));
+        // Act
+        var subject = game.CalculateScore();
+        // Assert
+        subject.Value.Should().Be(2);
+    }
+    
+    [Fact]
+    public void TestCalculateScore2()
+    {
+        // Arrange
+        var game = Game.NewGame(new List<RossmannProduct>() { new(1, "", 14, 3, "xD", ""), new(2, "", 14, 3, "xD", "")});
+        game.AddResponse(new Response(new ProductId(1), new PromotionalPriceResponse(3.6)));
+        game.AddResponse(new Response(new ProductId(2), new PromotionalPriceResponse(2.4)));
+        // Act
+        var subject = game.CalculateScore();
+        // Assert
+        subject.Value.Should().Be(1);
+    }
 }

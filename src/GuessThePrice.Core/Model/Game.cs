@@ -2,6 +2,7 @@ using GuessThePrice.Core.Model.Exceptions;
 using GuessThePrice.Core.Services;
 
 using LanguageExt;
+
 using static LanguageExt.Prelude;
 
 using Array = System.Array;
@@ -19,7 +20,6 @@ public class Product
 
     public Product()
     {
-        
     }
 
     public Product(RossmannProduct product)
@@ -33,7 +33,7 @@ public class Product
     }
 }
 
-public readonly record struct PromotionalPriceResponse(decimal Value);
+public readonly record struct PromotionalPriceResponse(double Value);
 
 public readonly record struct Score(double Value);
 
@@ -50,36 +50,54 @@ public sealed class Game
 
     public bool IsInitialized => Products.Count > 0;
     public bool IsFinished => Responses.Count == Products.Count;
-    
+
     public Game()
     {
         Products = Array.Empty<Product>();
         _responses = new List<Response>();
     }
-    
+
     private Game(IReadOnlyCollection<Product> products)
     {
         _responses = new List<Response>();
         Products = products;
     }
+
     public Either<Exception, Unit> AddResponse(Response response)
     {
         ArgumentNullException.ThrowIfNull(response);
         return TryAddResponse(response);
     }
-    
+
     public static Game NewGame(IEnumerable<RossmannProduct> products)
     {
         return new Game(products.Select(x => new Product(x)).ToList());
     }
-    
+
+    public Score CalculateScore()
+    {
+        var score = _responses.Join(Products, response => response.ProductId, product1 => product1.Id,
+            (response, product1) =>
+            {
+                var difference = Math.Abs(response.PromotionalPriceResponse.Value - product1.PromotionalPrice);
+                return difference switch
+                {
+                    < 0.5 => 1.0,
+                    < 1.0 => 0.5,
+                    _ => 0
+                };
+            }).Sum();
+
+        return new Score(score);
+    }
+
     private Either<Exception, Unit> TryAddResponse(Response response)
     {
         if (!IsInitialized)
         {
             return Left<Exception>(new GameIsNotStartedException("Game is not started"));
         }
-        
+
         if (IsFinished)
         {
             return Left<Exception>(new GameFinishedException("game is finished"));
@@ -98,6 +116,7 @@ public sealed class Game
             _responses.Add(response);
             return Right<Unit>(Unit.Default);
         }
+
         return Left<Exception>(new ProductsNotExistsException($"Product of id: {response.ProductId} not exists"));
     }
 }

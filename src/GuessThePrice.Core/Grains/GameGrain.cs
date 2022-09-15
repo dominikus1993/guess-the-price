@@ -50,8 +50,9 @@ public class GameGrain : Grain, IGameGrain
         return Task.FromResult<Game>(_state.State);
     }
 
-    public async Task<Score> GetGameScore()
+    public Task<Score> GetGameScore()
     {
-        throw new NotImplementedException();
+        var score = _state.State.CalculateScore();
+        return Task.FromResult(score);
     }
 }
