@@ -1,0 +1,10 @@
+AutoFixture
+FluentAssertions
+xunit
+xunit.runner.visualstudio
+Microsoft.Orleans.TestingHost
+Moq
+coverlet.collector
+Testcontainers
+Microsoft.NET.Test.Sdk
+Ogooreck
