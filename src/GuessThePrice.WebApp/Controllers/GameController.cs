@@ -30,13 +30,13 @@ public class GameController : ControllerBase
         var response = GameResponse.FromGame(game);
         return Ok(response);
     }
-    
+
     [HttpGet("{id:guid}/score")]
-    public async Task<ActionResult<double>> GetGameScore(Guid id)
+    public async Task<ActionResult<ScoreResponse>> GetGameScore(Guid id)
     {
         var gameGrain = _cluster.GetGrain<IGameGrain>(id);
         var score = await gameGrain.GetGameScore();
-        return Ok(score.Value);
+        return Ok(new ScoreResponse() { Value = score.Value });
     }
 
     [HttpPost("{id:guid}")]
