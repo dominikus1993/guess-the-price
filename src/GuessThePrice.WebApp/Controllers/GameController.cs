@@ -27,7 +27,8 @@ public class GameController : ControllerBase
     {
         var gameGrain = _cluster.GetGrain<IGameGrain>(id);
         var game = await gameGrain.GetGame();
-        return Ok(new GameResponse(game));
+        var response = GameResponse.FromGame(game);
+        return Ok(response);
     }
     
     [HttpGet("{id:guid}/score")]

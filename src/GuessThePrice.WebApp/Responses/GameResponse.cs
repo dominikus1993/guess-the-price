@@ -19,21 +19,18 @@ public class ProductDto
     public double Price { get; set; }
     public double PromotionalPrice { get; set; }
     public string NavigateUrl { get; set; }
-
-
-    public ProductDto()
-    {
-        
-    }
     
-    public ProductDto(Product product)
+    public static ProductDto FromProduct(Product product)
     {
-        Id = product.Id.Value;
-        Name = product.Name;
-        Price = product.Price;
-        ImageUrl = product.ImageUrl;
-        NavigateUrl = product.NavigateUrl;
-        PromotionalPrice = product.PromotionalPrice;
+        return new ProductDto()
+        {
+            Id = product.Id.Value,
+            Name = product.Name,
+            Price = product.Price,
+            ImageUrl = product.ImageUrl,
+            NavigateUrl = product.NavigateUrl,
+            PromotionalPrice = product.PromotionalPrice,
+        };
     }
 }
 
@@ -42,12 +39,13 @@ public class ResponseDto
     public int ProductId { get; set; }
     public double PromotionalPriceResponse { get; set; }
     
-    public ResponseDto() {}
-
-    public ResponseDto(Response response)
+    public static ResponseDto FromResponse(Response response)
     {
-        ProductId = response.ProductId.Value;
-        PromotionalPriceResponse = response.PromotionalPriceResponse.Value;
+        return new ResponseDto()
+        {
+            ProductId = response.ProductId.Value,
+            PromotionalPriceResponse = response.PromotionalPriceResponse.Value,
+        };
     }
 }
 
@@ -57,15 +55,17 @@ public sealed class GameResponse
 {
     public IReadOnlyCollection<ProductDto> Products { get; init; }
     public IReadOnlyCollection<ResponseDto> Responses { get; init; }
+    public bool IsInitialized { get; set; }
+    public bool IsFinished { get; set; }
 
-    public GameResponse()
+    public static GameResponse FromGame(Game game)
     {
-        
-    }
-
-    public GameResponse(Game game)
-    {
-        Products = game.Products.Select(product => new ProductDto(product)).ToList();
-        Responses = game.Responses.Select(response => new ResponseDto(response)).ToList();
+        return new GameResponse()
+        {
+            Products = game.Products.OfType<Product>().Select(product => ProductDto.FromProduct(product)).ToList(),
+            Responses = game.Responses.Select(response => ResponseDto.FromResponse(response)).ToList(),
+            IsFinished = game.IsFinished,
+            IsInitialized = game.IsInitialized,
+        };
     }
 }
