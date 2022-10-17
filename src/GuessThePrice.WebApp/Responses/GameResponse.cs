@@ -62,10 +62,10 @@ public sealed class GameResponse
     {
         return new GameResponse()
         {
-            Products = game.Products.OfType<Product>().Select(product => ProductDto.FromProduct(product)).ToList(),
+            Products = game.Products.Select(product => ProductDto.FromProduct(product)).ToList(),
             Responses = game.Responses.Select(response => ResponseDto.FromResponse(response)).ToList(),
-            IsFinished = game.IsFinished,
-            IsInitialized = game.IsInitialized,
+            IsFinished = game.State == GameState.Finished,
+            IsInitialized = game.State == GameState.New || game.State == GameState.Ongoing
         };
     }
 }
