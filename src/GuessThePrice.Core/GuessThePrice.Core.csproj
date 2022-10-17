@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <Orleans_CodeGenInputs Remove="Grains\GameGrain.cs" />
+    <Orleans_CodeGenInputs Remove="Grains\IGameGrain.cs" />
+  </ItemGroup>
 </Project>

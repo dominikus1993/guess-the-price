@@ -14,13 +14,11 @@ public class GameTests
     public void TestAddResponseWhenProductsListsIsEmpty()
     {
         // Arrange
-        var game = Game.NewGame(new List<RossmannProduct>());
+        var game = Game.Create(new GameStarted(new GameId(Guid.Empty), Array.Empty<Product>()));
         // Act
-        var result  = game.AddResponse(new Response(new ProductId(1), new PromotionalPriceResponse(21)));
+        var result  = game.Apply(new ResponseAdded(new Response(new ProductId(1), new PromotionalPriceResponse(21), DateTime.Now)));
         // Assert
-        result.IsLeft.Should().BeTrue();
-        var exc = result.IfRight(() => throw new Exception("Should be left"));
-        exc.Should().BeOfType<GameIsNotStartedException>();
+        result.Responses.Should().BeEmpty();
     }
     
     [Fact]

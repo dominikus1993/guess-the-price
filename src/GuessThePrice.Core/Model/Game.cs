@@ -33,50 +33,67 @@ public class Product
     }
 }
 
+public enum GameState
+{
+    New = 0,
+    Ongoing = 1,
+    Finished = 2,
+}
+
 public readonly record struct PromotionalPriceResponse(double Value);
 
 public readonly record struct Score(double Value);
 
-public record Response(ProductId ProductId, PromotionalPriceResponse PromotionalPriceResponse);
+public record Response(ProductId ProductId, PromotionalPriceResponse PromotionalPriceResponse, DateTime AddedAt);
 
 public readonly record struct ProductId(int Value);
 
-public sealed class Game
+public readonly record struct GameId(Guid Value)
 {
-    private const int MaximumAnswersQuantity = 5;
-    private List<Response> _responses;
-    public IReadOnlyCollection<Product> Products { get; }
-    public IReadOnlyCollection<Response> Responses => _responses;
-
-    public bool IsInitialized => Products.Count > 0;
-    public bool IsFinished => Responses.Count == Products.Count;
-
-    public Game()
+    public static GameId Create()
     {
-        Products = Array.Empty<Product>();
-        _responses = new List<Response>();
+        return new GameId(Guid.NewGuid());
+    }
+}
+
+public record GameStarted(GameId GameId, IReadOnlyCollection<Product> Products);
+
+public record ResponseAdded(Response Response);
+
+public record Game(GameId GameId, IReadOnlyCollection<Product> Products, IReadOnlyCollection<Response> Responses, GameState State)
+{
+    public static Game Create(GameStarted evt)
+    {
+        return new(evt.GameId, evt.Products, Array.Empty<Response>(), GameState.New);
     }
 
-    private Game(IReadOnlyCollection<Product> products)
+    public Game Apply(ResponseAdded evt)
     {
-        _responses = new List<Response>();
-        Products = products;
-    }
+        if (State == GameState.Finished)
+        {
+            return this;
+        }
+        
+        var responseExists = this.Responses.Any(x => x.ProductId == evt.Response.ProductId);
+        if (responseExists)
+        {
+            return this;
+        }
 
-    public Either<Exception, Unit> AddResponse(Response response)
-    {
-        ArgumentNullException.ThrowIfNull(response);
-        return TryAddResponse(response);
-    }
+        var productExists = this.Products.Any(x => x.Id == evt.Response.ProductId);
 
-    public static Game NewGame(IEnumerable<RossmannProduct> products)
-    {
-        return new Game(products.Select(x => new Product(x)).ToList());
-    }
+        if (productExists)
+        {
+            var responses = new List<Response>(Responses) { evt.Response };
+            return this with { Responses = responses };
+        }
 
+        return this;
+    }
+    
     public Score CalculateScore()
     {
-        var score = _responses.Join(Products, response => response.ProductId, product1 => product1.Id,
+        var score = Responses.Join(Products, response => response.ProductId, product1 => product1.Id,
             (response, product1) =>
             {
                 var difference = Math.Abs(response.PromotionalPriceResponse.Value - product1.PromotionalPrice);
@@ -89,34 +106,5 @@ public sealed class Game
             }).Sum();
 
         return new Score(score);
-    }
-
-    private Either<Exception, Unit> TryAddResponse(Response response)
-    {
-        if (!IsInitialized)
-        {
-            return Left<Exception>(new GameIsNotStartedException("Game is not started"));
-        }
-
-        if (IsFinished)
-        {
-            return Left<Exception>(new GameFinishedException("game is finished"));
-        }
-
-        var responseExists = this.Responses.Any(x => x.ProductId == response.ProductId);
-        if (responseExists)
-        {
-            return Left<Exception>(new ResponseExistsException($"response of id: {response.ProductId} exists"));
-        }
-
-        var productExists = this.Products.Any(x => x.Id == response.ProductId);
-
-        if (productExists)
-        {
-            _responses.Add(response);
-            return Right<Unit>(Unit.Default);
-        }
-
-        return Left<Exception>(new ProductsNotExistsException($"Product of id: {response.ProductId} not exists"));
     }
 }
