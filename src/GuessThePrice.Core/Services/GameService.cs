@@ -20,6 +20,18 @@ public class GameService
             throw new InvalidOperationException("Game is finished");
         }
 
+        var responseExists = state.Responses.Any(x => x.ProductId == cmd.Response.ProductId);
+        if (responseExists)
+        {
+            throw new InvalidOperationException("Response already exists");
+        }
+
+        var productExists = state.Products.Any(x => x.Id == cmd.Response.ProductId);
+
+        if (productExists)
+        {
+            throw new InvalidOperationException("Product not exists");
+        }
         return new ResponseAdded(cmd.Response);
     }
 }

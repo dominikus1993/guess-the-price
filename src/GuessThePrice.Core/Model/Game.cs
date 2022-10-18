@@ -90,26 +90,8 @@ public record Game(GameId GameId, IReadOnlyCollection<Product> Products, IReadOn
 
     public Game Apply(ResponseAdded evt)
     {
-        if (State == GameState.Finished)
-        {
-            return this;
-        }
-        
-        var responseExists = this.Responses.Any(x => x.ProductId == evt.Response.ProductId);
-        if (responseExists)
-        {
-            return this;
-        }
-
-        var productExists = this.Products.Any(x => x.Id == evt.Response.ProductId);
-
-        if (productExists)
-        {
-            var responses = new List<Response>(Responses) { evt.Response };
-            return this with { Responses = responses };
-        }
-
-        return this;
+        var responses = new List<Response>(Responses) { evt.Response };
+        return this with { Responses = responses };
     }
     
     public Score CalculateScore()
