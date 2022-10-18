@@ -90,8 +90,13 @@ public record Game(GameId GameId, IReadOnlyCollection<Product> Products, IReadOn
 
     public Game Apply(ResponseAdded evt)
     {
+        var futureState = Responses.Count == 0 ? GameState.Ongoing : State;
         var responses = new List<Response>(Responses) { evt.Response };
-        return this with { Responses = responses };
+        if (responses.Count >= Products.Count)
+        {
+            return this with { Responses = responses, State = GameState.Finished };
+        }
+        return this with { Responses = responses, State = futureState };
     }
     
     public Score CalculateScore()

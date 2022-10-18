@@ -28,7 +28,7 @@ public class GameService
 
         var productExists = state.Products.Any(x => x.Id == cmd.Response.ProductId);
 
-        if (productExists)
+        if (!productExists)
         {
             throw new InvalidOperationException("Product not exists");
         }
