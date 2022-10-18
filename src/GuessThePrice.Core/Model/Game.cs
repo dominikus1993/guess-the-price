@@ -81,11 +81,11 @@ public record GameStarted(GameId GameId, PlayerId PlayerId, IReadOnlyCollection<
 
 public record ResponseAdded(Response Response);
 
-public record Game(GameId GameId, IReadOnlyCollection<Product> Products, IReadOnlyCollection<Response> Responses, GameState State)
+public record Game(GameId GameId, IReadOnlyCollection<Product> Products, IReadOnlyCollection<Response> Responses, GameState State, long Version)
 {
     public static Game Create(GameStarted evt)
     {
-        return new(evt.GameId, evt.Products, Array.Empty<Response>(), GameState.New);
+        return new(evt.GameId, evt.Products, Array.Empty<Response>(), GameState.New, 1);
     }
 
     public Game Apply(ResponseAdded evt)
