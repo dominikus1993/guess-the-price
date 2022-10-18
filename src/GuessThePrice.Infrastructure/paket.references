@@ -3,3 +3,4 @@ Refit
 Refit.HttpClientFactory
 Refit.Newtonsoft.Json
 Microsoft.Extensions.Http
+Marten

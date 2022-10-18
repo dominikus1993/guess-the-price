@@ -95,6 +95,15 @@ public class Product
     [JsonPropertyName("category")] public string Category { get; set; }
 
     [JsonPropertyName("attributes")] public List<Attribute>? Attributes { get; set; }
+
+    public Picture? GetProductImage()
+    {
+        if (Pictures is null or { Count: 0})
+        {
+            return null;
+        }
+        return Pictures[0];
+    }
 }
 
 public class Promotion

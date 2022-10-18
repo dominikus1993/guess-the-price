@@ -23,6 +23,7 @@ nuget Orleans.Clustering.Redis
 nuget Orleans.Persistence.Redis
 nuget Swashbuckle.AspNetCore
 nuget OrleansDashboard
+nuget Marten
 
 nuget Microsoft.Orleans.TestingHost
 nuget AutoFixture

@@ -15,6 +15,8 @@ internal class HttpProductsDataProvider : IProductsDataProvider
     public IAsyncEnumerable<RossmannProduct> GetRandomPromotionalProducts(int take,
         CancellationToken cancellationToken = default)
     {
-        return _rossmannApiClient.GetMegaProducts(cancellationToken).Take(take).Select(x => new RossmannProduct(x.Id, $"{x.Name} {x.Caption}", x.OldPrice, x.Price, x.Pictures[0].Medium, x.NavigateUrl));
+        
+        return _rossmannApiClient.GetMegaProducts(cancellationToken).Take(take).Select(x => new RossmannProduct(x.Id, $"{x.Name} {x.Caption}", x.OldPrice, x.Price, x.GetProductImage()?.Medium, x.NavigateUrl));
     }
+    
 }

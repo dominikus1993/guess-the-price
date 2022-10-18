@@ -9,14 +9,21 @@ using Array = System.Array;
 
 namespace GuessThePrice.Core.Model;
 
+public record struct PlayerId(Guid Value)
+{
+    public static PlayerId Create()
+    {
+        return new PlayerId(Guid.NewGuid());
+    }
+}
 public class Product
 {
-    public ProductId Id { get; set; }
-    public string Name { get; set; }
-    public string ImageUrl { get; set; }
-    public double Price { get; set; }
-    public double PromotionalPrice { get; set; }
-    public string NavigateUrl { get; set; }
+    public ProductId Id { get; init; }
+    public string Name { get; init; }
+    public string? ImageUrl { get; init; }
+    public double Price { get; init; }
+    public double PromotionalPrice { get; init; }
+    public string NavigateUrl { get; init; }
 
     public Product()
     {
@@ -44,7 +51,14 @@ public readonly record struct PromotionalPriceResponse(double Value);
 
 public readonly record struct Score(double Value);
 
-public record Response(ProductId ProductId, PromotionalPriceResponse PromotionalPriceResponse, DateTime AddedAt);
+public record Response(ProductId ProductId, PromotionalPriceResponse PromotionalPriceResponse, DateTime AddedAt)
+{
+    public Response(ProductId productId, PromotionalPriceResponse promotionalPriceResponse) : this(productId,
+        promotionalPriceResponse, DateTime.UtcNow)
+    {
+        
+    }
+}
 
 public readonly record struct ProductId(int Value);
 
@@ -56,7 +70,14 @@ public readonly record struct GameId(Guid Value)
     }
 }
 
-public record GameStarted(GameId GameId, IReadOnlyCollection<Product> Products);
+public record GameStarted(GameId GameId, PlayerId PlayerId, IReadOnlyCollection<Product> Products)
+{
+    public GameStarted(GameId id, PlayerId playerId, IReadOnlyCollection<RossmannProduct> products) : this(id, playerId,
+        products.Select(x => new Product(x)).ToList())
+    {
+        
+    }
+}
 
 public record ResponseAdded(Response Response);
 
