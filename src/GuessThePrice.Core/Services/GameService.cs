@@ -5,7 +5,7 @@ namespace GuessThePrice.Core.Services;
 public record StartGame(PlayerId PlayerId, IReadOnlyCollection<Product> Products);
 public record AddResponse(Response Response);
 
-public class GameService
+public static class GameService
 {
     public static GameStarted Handle(StartGame cmd)
     {
@@ -15,18 +15,19 @@ public class GameService
 
     public static ResponseAdded Handle(Game state, AddResponse cmd)
     {
-        if (state.State == GameState.Finished)
+        var (_, products, responses, gameState, _) = state;
+        if (gameState == GameState.Finished)
         {
             throw new InvalidOperationException("Game is finished");
         }
 
-        var responseExists = state.Responses.Any(x => x.ProductId == cmd.Response.ProductId);
+        var responseExists = responses.Any(x => x.ProductId == cmd.Response.ProductId);
         if (responseExists)
         {
             throw new InvalidOperationException("Response already exists");
         }
 
-        var productExists = state.Products.Any(x => x.Id == cmd.Response.ProductId);
+        var productExists = products.Any(x => x.Id == cmd.Response.ProductId);
 
         if (!productExists)
         {
