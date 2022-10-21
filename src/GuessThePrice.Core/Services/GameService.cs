@@ -2,7 +2,7 @@ using GuessThePrice.Core.Model;
 
 namespace GuessThePrice.Core.Services;
 
-public record StartGame(PlayerId PlayerId, IReadOnlyCollection<Product> Products);
+public record StartGame(Guid PlayerId, IReadOnlyCollection<Product> Products);
 public record AddResponse(Response Response);
 
 public static class GameService
@@ -10,7 +10,7 @@ public static class GameService
     public static GameStarted Handle(StartGame cmd)
     {
         var (playerId, products) = cmd;
-        return new GameStarted(GameId.Create(), playerId, products);
+        return new GameStarted(Guid.NewGuid(), playerId, products);
     }
 
     public static ResponseAdded Handle(Game state, AddResponse cmd)

@@ -9,13 +9,6 @@ using Array = System.Array;
 
 namespace GuessThePrice.Core.Model;
 
-public record struct PlayerId(Guid Value)
-{
-    public static PlayerId Create()
-    {
-        return new PlayerId(Guid.NewGuid());
-    }
-}
 public class Product
 {
     public ProductId Id { get; init; }
@@ -62,17 +55,10 @@ public record Response(ProductId ProductId, PromotionalPriceResponse Promotional
 
 public readonly record struct ProductId(int Value);
 
-public readonly record struct GameId(Guid Value)
-{
-    public static GameId Create()
-    {
-        return new GameId(Guid.NewGuid());
-    }
-}
 
-public record GameStarted(GameId GameId, PlayerId PlayerId, IReadOnlyCollection<Product> Products)
+public record GameStarted(Guid GameId, Guid PlayerId, IReadOnlyCollection<Product> Products)
 {
-    public GameStarted(GameId id, PlayerId playerId, IReadOnlyCollection<RossmannProduct> products) : this(id, playerId,
+    public GameStarted(Guid id, Guid playerId, IReadOnlyCollection<RossmannProduct> products) : this(id, playerId,
         products.Select(x => new Product(x)).ToList())
     {
         
@@ -81,7 +67,7 @@ public record GameStarted(GameId GameId, PlayerId PlayerId, IReadOnlyCollection<
 
 public record ResponseAdded(Response Response);
 
-public record Game(GameId GameId, IReadOnlyCollection<Product> Products, IReadOnlyCollection<Response> Responses, GameState State, long Version)
+public record Game(Guid GameId, IReadOnlyCollection<Product> Products, IReadOnlyCollection<Response> Responses, GameState State, long Version)
 {
     public static Game Create(GameStarted evt)
     {

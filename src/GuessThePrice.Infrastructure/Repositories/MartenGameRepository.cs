@@ -14,6 +14,11 @@ internal class MartenGameRepository : IGameRepository
         _documentSession = documentSession;
     }
 
+    public Task Add(Guid id, object @event, CancellationToken ct)
+    {
+        _documentSession.Events.StartStream<Game>(id, @event);
+        return _documentSession.SaveChangesAsync(token: ct);
+    }
     public async Task GetAndUpdate(Guid id, int version, Func<Game, object> handle, CancellationToken ct)
     {
         await _documentSession.Events.WriteToAggregate<Game>(id, version, stream =>

@@ -11,7 +11,7 @@ public class GameServiceTests
     public void TestAddResponseWhenProductsListsIsEmpty()
     {
         // Arrange
-        var gameStarted = GameService.Handle(new StartGame(PlayerId.Create(), Array.Empty<Product>()));
+        var gameStarted = GameService.Handle(new StartGame(Guid.NewGuid(), Array.Empty<Product>()));
         var game = Game.Create(gameStarted);
         // Act
         var subject = Assert.Throws<InvalidOperationException>(() => GameService.Handle(game,
@@ -27,7 +27,7 @@ public class GameServiceTests
         var products =
             new List<RossmannProduct>() { new(1, "", 1.2, 3.2, "xD", ""), new(2, "", 1.2, 3.2, "xD", "") }.Select(x =>
                 new Product(x));
-        var game = Game.Create(new GameStarted(GameId.Create(), PlayerId.Create(), products.ToArray()));
+        var game = Game.Create(new GameStarted(Guid.NewGuid(), Guid.NewGuid(), products.ToArray()));
         game = game.Apply(new ResponseAdded(new Response(new ProductId(1), new PromotionalPriceResponse(21), DateTime.Now)));
         // Act
         var subject = game.Apply(GameService.Handle(game, new AddResponse(new Response(new ProductId(2), new PromotionalPriceResponse(21), DateTime.Now))));
@@ -43,7 +43,7 @@ public class GameServiceTests
         var products =
             new List<RossmannProduct>() { new(1, "", 1.2, 3.2, "xD", ""), new(2, "", 1.2, 3.2, "xD", "") }.Select(x =>
                 new Product(x));
-        var game = Game.Create(new GameStarted(GameId.Create(), PlayerId.Create(), products.ToArray()));
+        var game = Game.Create(new GameStarted(Guid.NewGuid(), Guid.NewGuid(), products.ToArray()));
         game = game.Apply(new ResponseAdded(new Response(new ProductId(1), new PromotionalPriceResponse(21), DateTime.Now)));
         // Act
         game = game.Apply(new ResponseAdded(new Response(new ProductId(2), new PromotionalPriceResponse(21), DateTime.Now)));
@@ -63,7 +63,7 @@ public class GameServiceTests
         var products =
             new List<RossmannProduct>() { new(1, "", 1.2, 3.2, "xD", ""), new(2, "", 1.2, 3.2, "xD", "") }.Select(x =>
                 new Product(x));
-        var game = Game.Create(new GameStarted(GameId.Create(), PlayerId.Create(), products.ToArray()));
+        var game = Game.Create(new GameStarted(Guid.NewGuid(), Guid.NewGuid(), products.ToArray()));
         game = game.Apply(new ResponseAdded(new Response(new ProductId(1), new PromotionalPriceResponse(21), DateTime.Now)));
         // Act
         var subject = Assert.Throws<InvalidOperationException>(() => GameService.Handle(game,
@@ -79,7 +79,7 @@ public class GameServiceTests
         var products =
             new List<RossmannProduct>() { new(1, "", 1.2, 3.2, "xD", ""), new(2, "", 1.2, 3.2, "xD", "") }.Select(x =>
                 new Product(x));
-        var game = Game.Create(new GameStarted(GameId.Create(), PlayerId.Create(), products.ToArray()));
+        var game = Game.Create(new GameStarted(Guid.NewGuid(), Guid.NewGuid(), products.ToArray()));
         var priceResponse = new PromotionalPriceResponse(21);
         game = game.Apply(new ResponseAdded(new Response(new ProductId(1), priceResponse, DateTime.Now)));
         // Act

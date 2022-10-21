@@ -17,7 +17,7 @@ public class GameTests
         var products =
             new List<RossmannProduct>() { new(1, "", 1.2, 3.2, "xD", ""), new(2, "", 1.2, 3.2, "xD", "") }.Select(x =>
                 new Product(x)).ToList();
-        var game = Game.Create(new GameStarted(GameId.Create(), PlayerId.Create(), products));
+        var game = Game.Create(new GameStarted(Guid.NewGuid(), Guid.NewGuid(), products));
         // Act
         var result  = game.Apply(new ResponseAdded(new Response(new ProductId(1), new PromotionalPriceResponse(21), DateTime.Now)));
         // Assert
@@ -32,7 +32,7 @@ public class GameTests
         var products =
             new List<RossmannProduct>() { new(1, "", 1.2, 3.2, "xD", ""), new(2, "", 1.2, 3.2, "xD", "") }.Select(x =>
                 new Product(x)).ToList();
-        var game = Game.Create(new GameStarted(GameId.Create(), PlayerId.Create(), products));
+        var game = Game.Create(new GameStarted(Guid.NewGuid(), Guid.NewGuid(), products));
         // Act
         game  = game.Apply(new ResponseAdded(new Response(new ProductId(1), new PromotionalPriceResponse(21), DateTime.Now)));
         var result  = game.Apply(new ResponseAdded(new Response(new ProductId(2), new PromotionalPriceResponse(21), DateTime.Now)));
@@ -48,7 +48,7 @@ public class GameTests
         var products =
             new List<RossmannProduct>() { new(1, "", 1.2, 3.2, "xD", ""), new(2, "", 1.2, 3.2, "xD", "") }.Select(x =>
                 new Product(x));
-        var game = Game.Create(new GameStarted(GameId.Create(), PlayerId.Create(), products.ToArray()));
+        var game = Game.Create(new GameStarted(Guid.NewGuid(), Guid.NewGuid(), products.ToArray()));
         game = game.Apply(new ResponseAdded(new Response(new ProductId(1), new PromotionalPriceResponse(3.2), DateTime.Now)));
         game = game.Apply(new ResponseAdded(new Response(new ProductId(2), new PromotionalPriceResponse(3.2), DateTime.Now)));
         // Act
@@ -64,7 +64,7 @@ public class GameTests
         var products =
             new List<RossmannProduct>() { new(1, "", 1.2, 3, "xD", ""), new(2, "", 1.2, 3, "xD", "") }.Select(x =>
                 new Product(x));
-        var game = Game.Create(new GameStarted(GameId.Create(), PlayerId.Create(), products.ToArray()));
+        var game = Game.Create(new GameStarted(Guid.NewGuid(), Guid.NewGuid(), products.ToArray()));
         game = game.Apply(new ResponseAdded(new Response(new ProductId(1), new PromotionalPriceResponse(3.6), DateTime.Now)));
         game = game.Apply(new ResponseAdded(new Response(new ProductId(2), new PromotionalPriceResponse(2.4), DateTime.Now)));
         // Act
