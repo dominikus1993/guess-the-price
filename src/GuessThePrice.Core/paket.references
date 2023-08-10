@@ -1,6 +1,0 @@
-Microsoft.Orleans.Core.Abstractions
-Microsoft.Orleans.Runtime.Abstractions
-Microsoft.Extensions.Logging.Abstractions
-System.Linq.Async
-Microsoft.Orleans.CodeGenerator.MSBuild
-LanguageExt.Core
